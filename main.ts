@@ -27,14 +27,33 @@ snakepos.slice(0, -1).forEach(pos => strip.range(pos, 1).showColor(maincolour))
 strip.range(snakepos[snakepos.length - 1], 1).showColor(headcolour)
 strip.range(applepos, 1).showColor(applecolour)
 
-// Wait until radio signal arrives to begin
-radio.onReceivedValue(function(name: string, value: number) {
-    
-})
+// while loop for radio signals
+while (true) {
+
+    // Wait until radio signal arrives to begin
+    radio.onReceivedValue(function (name: string, value: number) {
+        if (name === "start" && value === 1) {
+            start = true
+        }
+    })
+
+    // Radio directions
+    radio.onReceivedValue(function (name: string, value: number) {
+        if (name === "dir" && value === 1) {
+            dir += 1
+        } else if (name === "dir" && value == -1) {
+            dir -= 1
+        }
+        dir %= 4
+    })
+
+}
+
 
 
 while (alive && start) {
     
+
 
 
     basic.pause(500)
