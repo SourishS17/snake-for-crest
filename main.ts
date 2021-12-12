@@ -8,6 +8,7 @@ let strip = neopixel.create(DigitalPin.P0, 144, NeoPixelMode.RGB)
 let size = 3
 let score = 0
 let alive = true
+let start = false
 
 // Setting up colours for the game
 let headcolour = neopixel.rgb(0, 150, 255)
@@ -21,9 +22,18 @@ let applepos = 63
 // Direction; 0 - up, 1 - right, 2 - down, 3 - left
 let dir = 1
 
-snakepos.forEach(pos => );
+// Starting position
+snakepos.slice(0, -1).forEach(pos => strip.range(pos, 1).showColor(maincolour))
+strip.range(snakepos[snakepos.length - 1], 1).showColor(headcolour)
+strip.range(applepos, 1).showColor(applecolour)
 
-while (alive){
+// Wait until radio signal arrives to begin
+radio.onReceivedValue(function(name: string, value: number) {
+    
+})
+
+
+while (alive && start) {
     
 
 
