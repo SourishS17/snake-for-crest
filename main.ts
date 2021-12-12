@@ -9,6 +9,7 @@ let size = 3
 let score = 0
 let alive = true
 let start = false
+let cur = 67
 
 // Setting up colours for the game
 let headcolour = neopixel.rgb(0, 150, 255)
@@ -50,10 +51,12 @@ while (true) {
 }
 
 
-
+// Main game
 while (alive && start) {
     
-
+    snakepos = snakepos.slice(1)
+    cur = snakepos[snakepos.length - 1]
+    
 
 
     basic.pause(500)
