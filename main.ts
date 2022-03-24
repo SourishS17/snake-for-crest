@@ -20,6 +20,23 @@ let applecolour = neopixel.rgb(255, 0, 0)
 let snakepos = [69, 68, 67]
 let applepos = 63
 
+// Setting up the 2D array coordinate grid
+let grid = []
+for (let row = 0; row < 12; row ++) {
+
+    let currow = []
+    for (let num = 12*row; num < num + 12; num ++) {
+        currow.push(num)
+    }
+    if (row % 2 === 1) {
+        currow.reverse()
+    }
+
+    grid.push(currow)
+
+}
+
+
 // Direction; 0 - up, 1 - right, 2 - down, 3 - left
 let dir = 1
 
@@ -29,7 +46,7 @@ strip.range(snakepos[snakepos.length - 1], 1).showColor(headcolour)
 strip.range(applepos, 1).showColor(applecolour)
 
 // while loop for radio signals
-while (true) {
+while (!(start)) {
 
     // Wait until radio signal arrives to begin
     radio.onReceivedValue(function (name: string, value: number) {
@@ -37,13 +54,16 @@ while (true) {
             start = true
         }
     })
+}
+
+while (start) {
 
     // Radio directions
     radio.onReceivedValue(function (name: string, value: number) {
         if (name === "dir" && value === 1) {
-            dir += 1
+            dir ++
         } else if (name === "dir" && value == -1) {
-            dir -= 1
+            dir --
         }
         dir %= 4
     })
@@ -54,10 +74,13 @@ while (true) {
 // Main game
 while (alive && start) {
     
+    basic.pause(1000)
+
+
     snakepos = snakepos.slice(1)
     cur = snakepos[snakepos.length - 1]
     
 
 
-    basic.pause(500)
+    
 }
