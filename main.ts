@@ -81,13 +81,46 @@ while (start) {
 // Main game
 while (alive && start) {
     
+    // Time delay between the snake moving
     basic.pause(1000)
 
-
-    snakepos = snakepos.slice(1)
-    let cur = snakepos[snakepos.length - 1]
+    // Moving the snake
+    strip.range(grid[head[1]][head[0]], 1).showColor(maincolour)
+    head[0] += dirs[dir][0]
+    head[1] += dirs[dir][1]
+    snakepos.push(head)
     
 
+    // Checking if the snake is out of bounds
+    if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] >11) {
+        alive = false
+        strip.clear()
+        radio.sendValue("score", score)
+        break
+    }
 
+    // Checking if the snake gets the apple
+    if (head === applepos) {
+        
+        score++
+        size++
+
+        // Generating new valid apple positions
+        while (snakepos.some(x => x === applepos)) {
+            applepos[0] = randint(0, 11)
+            applepos[1] = randint(0, 11)
+        }
     
+        strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
+
+
+    } else {
+        // Don't increase snake size if apple not collected
+        strip.range(grid[snakepos[0][1]][snakepos[0][0]], 1).clear()
+        snakepos = snakepos.slice(1)
+    }
+
+    // Update snake
+    strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
+
 }
