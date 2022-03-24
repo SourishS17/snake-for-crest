@@ -16,34 +16,41 @@ let headcolour = neopixel.rgb(0, 150, 255)
 let maincolour = neopixel.rgb(0, 200, 255)
 let applecolour = neopixel.rgb(255, 0, 0)
 
-// Setting up locations
-let snakepos = [69, 68, 67]
-let applepos = 63
-
 // Setting up the 2D array coordinate grid
-let grid = []
+let grid:number[][]
+
+// Working through each row
 for (let row = 0; row < 12; row ++) {
 
     let currow = []
+
+    // Adding the indices from the current row
     for (let num = 12*row; num < num + 12; num ++) {
         currow.push(num)
     }
+
+    // Reverse the direction of the indices on alternating rows
     if (row % 2 === 1) {
         currow.reverse()
     }
 
     grid.push(currow)
-
 }
 
+// Setting up coodinate locations
+let snakepos = [[2, 5], [3, 5], [4, 5]]
+let head = snakepos[snakepos.length - 1]
+let applepos = [8, 5]
 
+// Direction coordinate changes
+let dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 // Direction; 0 - up, 1 - right, 2 - down, 3 - left
 let dir = 1
 
 // Starting position
-snakepos.slice(0, -1).forEach(pos => strip.range(pos, 1).showColor(maincolour))
-strip.range(snakepos[snakepos.length - 1], 1).showColor(headcolour)
-strip.range(applepos, 1).showColor(applecolour)
+snakepos.slice(0, -1).forEach(pos => strip.range(grid[pos[1]][pos[0]], 1).showColor(maincolour))
+strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
+strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
 
 // while loop for radio signals
 while (!(start)) {
@@ -78,7 +85,7 @@ while (alive && start) {
 
 
     snakepos = snakepos.slice(1)
-    cur = snakepos[snakepos.length - 1]
+    let cur = snakepos[snakepos.length - 1]
     
 
 
