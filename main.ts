@@ -17,15 +17,15 @@ let maincolour = neopixel.rgb(0, 200, 255)
 let applecolour = neopixel.rgb(255, 0, 0)
 
 // Setting up the 2D array coordinate grid
-let grid:number[][]
+const grid:number[][] = []
 
 // Working through each row
 for (let row = 0; row < 12; row ++) {
 
-    let currow = []
+    const currow = []
 
     // Adding the indices from the current row
-    for (let num = 12*row; num < num + 12; num ++) {
+    for (let num = 12 * row; num < (row + 1)*12; num ++) {
         currow.push(num)
     }
 
