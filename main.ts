@@ -51,8 +51,8 @@ let dir = 1
 snakepos.slice(0, -1).forEach(pos => strip.range(grid[pos[1]][pos[0]], 1).showColor(maincolour))
 strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
 strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
-
-// while loop for radio signals
+start = true
+// Loop for radio signals
 while (!(start)) {
 
     // Wait until radio signal arrives to begin
@@ -63,64 +63,71 @@ while (!(start)) {
     })
 }
 
-while (start) {
+basic.forever(function () {
 
-    // Radio directions
-    radio.onReceivedValue(function (name: string, value: number) {
-        if (name === "dir" && value === 1) {
-            dir ++
-        } else if (name === "dir" && value == -1) {
-            dir --
-        }
-        dir %= 4
-    })
-
-}
+    // Only run once the game has started
+    if (start) {
+        // Radio directions
+        radio.onReceivedValue(function (name: string, value: number) {
+            if (name === "dir" && value === 1) {
+                dir++
+            } else if (name === "dir" && value == -1) {
+                dir--
+            }
+            dir %= 4
+        })
+    }
+})
 
 
 // Main game
-while (alive && start) {
+basic.forever(function() { 
     
-    // Time delay between the snake moving
-    basic.pause(1000)
+    // Only run if the game is active
+    if (alive && start) {
 
-    // Moving the snake
-    strip.range(grid[head[1]][head[0]], 1).showColor(maincolour)
-    head[0] += dirs[dir][0]
-    head[1] += dirs[dir][1]
-    snakepos.push(head)
-    
+        // Time delay between the snake moving
+        basic.pause(1000)
 
-    // Checking if the snake is out of bounds
-    if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] >11) {
-        alive = false
-        strip.clear()
-        radio.sendValue("score", score)
-        break
-    }
-
-    // Checking if the snake gets the apple
-    if (head === applepos) {
+        // Moving the snake
+        strip.range(grid[head[1]][head[0]], 1).showColor(maincolour)
+        head[0] += dirs[dir][0]
+        head[1] += dirs[dir][1]
+        snakepos.push(head)
         
-        score++
-        size++
 
-        // Generating new valid apple positions
-        while (snakepos.some(x => x === applepos)) {
-            applepos[0] = randint(0, 11)
-            applepos[1] = randint(0, 11)
+        // Checking if the snake is out of bounds
+        if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] >11) {
+            alive = false
+            strip.clear()
+            strip.show()
+            radio.sendValue("score", score)
+            
+        } else {
+
+            // Checking if the snake gets the apple
+            if (head[0] === applepos[0] && head[1] === applepos[1]) {
+                
+                score++
+                size++
+
+                // Generating new valid apple positions
+                while (snakepos.some(x => x === applepos)) {
+                    applepos[0] = randint(0, 11)
+                    applepos[1] = randint(0, 11)
+                }
+            
+                strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
+
+
+            } else {
+                // Don't increase snake size if apple not collected
+                strip.range(grid[snakepos[0][1]][snakepos[0][0]], 1).clear()
+                snakepos = snakepos.slice(1)
+            }
+
+            // Update snake
+            strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
         }
-    
-        strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
-
-
-    } else {
-        // Don't increase snake size if apple not collected
-        strip.range(grid[snakepos[0][1]][snakepos[0][0]], 1).clear()
-        snakepos = snakepos.slice(1)
     }
-
-    // Update snake
-    strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
-
-}
+})
