@@ -70,9 +70,9 @@ basic.forever(function () {
         // Radio directions
         radio.onReceivedValue(function (name: string, value: number) {
             if (name === "dir" && value === 1) {
-                dir++
+                dir ++
             } else if (name === "dir" && value == -1) {
-                dir--
+                dir --
             }
             dir %= 4
         })
@@ -81,13 +81,11 @@ basic.forever(function () {
 
 
 // Main game
-basic.forever(function() { 
+// Run at regular intervals for time delay between snake moving
+loops.everyInterval(1000, function () {
     
     // Only run if the game is active
     if (alive && start) {
-
-        // Time delay between the snake moving
-        basic.pause(1000)
 
         // Moving the snake
         strip.range(grid[head[1]][head[0]], 1).showColor(maincolour)
@@ -97,19 +95,19 @@ basic.forever(function() {
         
 
         // Checking if the snake is out of bounds
-        if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] >11) {
+        if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] > 11) {
             alive = false
             strip.clear()
             strip.show()
             radio.sendValue("score", score)
-            
+
         } else {
 
             // Checking if the snake gets the apple
-            if (head[0] === applepos[0] && head[1] === applepos[1]) {
+            if (head === applepos) {
                 
-                score++
-                size++
+                score ++
+                size ++
 
                 // Generating new valid apple positions
                 while (snakepos.some(x => x === applepos)) {
