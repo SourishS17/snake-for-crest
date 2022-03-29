@@ -67,15 +67,14 @@ basic.forever(function () {
 
     // Only run once the game has started
     if (start) {
+
         // Radio directions
         radio.onReceivedValue(function (name: string, value: number) {
-            if (name === "dir" && value === 1) {
-                dir ++
-            } else if (name === "dir" && value == -1) {
-                dir --
+            if (name === "dir") {
+                dir = value
             }
-            dir %= 4
         })
+        
     }
 })
 
