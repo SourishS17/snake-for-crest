@@ -43,7 +43,7 @@ let head = [4, 5]
 let applepos = [8, 5]
 
 // Functioanl to generate new apple coordinates
-const test = (a: Array<number>) => (a[0] == applepos[0] && a[1] == applepos[1])
+const test = (a: Array<number>) => !(a[0] == applepos[0] && a[1] == applepos[1])
 
 // Direction coordinate changes
 let dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]]
@@ -87,7 +87,7 @@ basic.forever(function () {
 
 // Main game
 // Run at regular intervals for time delay between snake moving
-loops.everyInterval(500, function () {
+loops.everyInterval(350, function () {
     
     // Only run if the game is active
     if (alive && start) {
