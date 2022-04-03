@@ -45,6 +45,9 @@ let applepos = [8, 5]
 // Functioanl to generate new apple coordinates
 const test = (a: Array<number>) => !(a[0] == applepos[0] && a[1] == applepos[1])
 
+const test1 = (a: Array<number>) => !(a[0] == head[0] && a[1] == head[1])
+
+
 // Direction coordinate changes
 let dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 // Direction; 0 - up, 1 - right, 2 - down, 3 - left
@@ -84,7 +87,6 @@ basic.forever(function () {
     }
 })
 
-
 // Main game
 // Run at regular intervals for time delay between snake moving
 loops.everyInterval(350, function () {
@@ -98,23 +100,36 @@ loops.everyInterval(350, function () {
         head = [snakepos[snakepos.length - 1][0], snakepos[snakepos.length - 1][1]]
         head[0] += dirs[dir][0]
         head[1] += dirs[dir][1]
-        snakepos.push(head)
-        strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
 
         // Checking if the snake is out of bounds
         if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] > 11) {
+
+            head[0] = (head[0]+12) % 12
+            head[1] = (head[1]+12) % 12
+        }
+
+        strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
+
+
+        // If the snake hits itself
+        if (!(snakepos.every(test1))) {
+            
             alive = false
             strip.showColor((0,0,0))
             radio.sendValue("score", score)
 
+
         } else {
+
+            snakepos.push(head)
+
 
             // Checking if the snake gets the apple
             if (head[0] === applepos[0] && head[1] === applepos[1]) {
                 //applepos=[5,9]
                 score ++
                 size ++
-                while (snakepos.every(test)) {
+                while (!(snakepos.every(test))) {
                     applepos = [randint(0, 11), randint(0, 11)]
                 }
                 applepos = [randint(0, 11),randint(0, 11)]
