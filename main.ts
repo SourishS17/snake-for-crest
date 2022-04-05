@@ -5,11 +5,8 @@ radio.setGroup(1)
 let strip = neopixel.create(DigitalPin.P0, 144, NeoPixelMode.RGB)
 
 // Setting up initial variables
-let size = 3
 let score = 0
-let alive = true
-let start = false
-let cur = 67
+let playing = false
 
 // Setting up colours for the game
 let headcolour = neopixel.rgb(0, 50, 255)
@@ -42,11 +39,9 @@ let snakepos = [[2, 5], [3, 5], [4, 5]]
 let head = [4, 5]
 let applepos = [8, 5]
 
-// Functioanl to generate new apple coordinates
-const test = (a: Array<number>) => !(a[0] == applepos[0] && a[1] == applepos[1])
-
-const test1 = (a: Array<number>) => !(a[0] == head[0] && a[1] == head[1])
-
+// Functions to check if apple/head in/hits body
+const appleclash = (a: Array<number>) => !(a[0] == applepos[0] && a[1] == applepos[1])
+const headclash = (a: Array<number>) => !(a[0] == head[0] && a[1] == head[1])
 
 // Direction coordinate changes
 let dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]]
@@ -60,22 +55,23 @@ strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
 
 // Loop for radio signals
 basic.forever(function() {
-    if (!(start)) {
+  
+    if (!(playing)) {
 
         // Wait until radio signal arrives to begin
         radio.onReceivedValue(function (name: string, value: number) {
             if (name === "start" && value === 1) {
-                start = true
+                playing = true
             }
         })
     }
 })
 
-
+// Loop for radio signals
 basic.forever(function () {
 
     // Only run once the game has started
-    if (start) {
+    if (playing) {
 
         // Radio directions
         radio.onReceivedValue(function (name: string, value: number) {
@@ -92,7 +88,7 @@ basic.forever(function () {
 loops.everyInterval(350, function () {
     
     // Only run if the game is active
-    if (alive && start) {
+    if (playing) {
 
 
         // Moving the snake
@@ -104,35 +100,35 @@ loops.everyInterval(350, function () {
         // Checking if the snake is out of bounds
         if (head[0] < 0 || head[0] > 11 || head[1] < 0 || head[1] > 11) {
 
+            // Add twelve because -1 mod 12 returns -1
             head[0] = (head[0]+12) % 12
             head[1] = (head[1]+12) % 12
         }
 
+        // Update head position
         strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
 
-
         // If the snake hits itself
-        if (!(snakepos.every(test1))) {
+        if (!(snakepos.every(headclash))) {
             
-            alive = false
+            playing = false
             strip.showColor((0,0,0))
             radio.sendValue("score", score)
-
 
         } else {
 
             snakepos.push(head)
 
-
             // Checking if the snake gets the apple
             if (head[0] === applepos[0] && head[1] === applepos[1]) {
-                //applepos=[5,9]
+
                 score ++
-                size ++
-                while (!(snakepos.every(test))) {
+
+                // Generate new apple coords
+                while (!(snakepos.every(appleclash))) {
                     applepos = [randint(0, 11), randint(0, 11)]
                 }
-                applepos = [randint(0, 11),randint(0, 11)]
+
                 strip.range(grid[applepos[1]][applepos[0]], 1).showColor(applecolour)
 
 
@@ -142,11 +138,6 @@ loops.everyInterval(350, function () {
                 snakepos = snakepos.slice(1)
             }
 
-
-            // Update snake
-            //strip.range(grid[head[1]][head[0]], 1).showColor(headcolour)
         }
     }
 })
-
-
